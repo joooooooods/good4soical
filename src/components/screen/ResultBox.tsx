@@ -1,47 +1,76 @@
-import { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import UniversityList from "../childs/UniversityList";
+import MajorList from "../childs/MajorList";
+import Detail from "../childs/Detail";
+import { QuestionFetchProps, QuestionType } from "@/service/fetch";
+
 type ResultProps = {
-    result: string[];
+    result: QuestionFetchProps | null;
 };
 
-const ResultBox = ({ result = [""] }: ResultProps) => {
-    const [clickedDate, setClickedDate] = useState(-1);
-    const [disabledDates, setDisabledDates] = useState<string[]>([]);
+const ResultBox = ({ result = [] }: ResultProps) => {
+    const [tempalry, setTempalry] = useState<QuestionType[]>([]);
+    const [selectedUniversities, setSelectedUniversities] = useState<string[]>(
+        [],
+    );
+    const [selectedReslut, setSelectedReslut] = useState<QuestionType[]>([]);
+    const [currentStep, setCurrentStep] = useState<"a" | "b" | "details">("a");
 
-    const handleClick = (date: string, index: number) => {
-        // 이미 선택된 날짜인지 확인
-        const newDisabledDates = result
-            .filter((item) => item.includes(date))
-            .map((item) => item.split("_")[1]);
-        console.log("newDisabledDates>>", newDisabledDates);
-        setDisabledDates(newDisabledDates);
-        setClickedDate(index);
+    const handleCompleteUniversity = () => {
+        if (selectedUniversities.length === 0) {
+            alert("대학을 선택해주세요.");
+            return;
+        }
+        setCurrentStep("details");
+    };
+
+    const handleUniversityItemClick = (item: QuestionType[]) => {
+        setTempalry(item);
+        setCurrentStep("b");
+    };
+
+    const handlePrevClick = () => {
+        setSelectedReslut([]);
+        setCurrentStep("a");
+    };
+
+    const handleNextClick = (univertisie: QuestionType[]) => {
+        setSelectedUniversities([
+            ...selectedUniversities,
+            univertisie?.[0]?.university,
+        ]);
+        setSelectedReslut([...selectedReslut, ...univertisie]);
+        setTempalry([]);
+        setCurrentStep("a");
     };
 
     return (
-        <div className="flex flex-col items-end">
-            {result.map((item, index) => {
-                const currentDate = item.split("_")[1];
-                return (
-                    <button
-                        key={index}
-                        className={`${
-                            clickedDate === index
-                                ? "bg-yellow-300"
-                                : disabledDates.includes(currentDate)
-                                ? "bg-gray-500"
-                                : "bg-blue-500"
-                        } rounded-md mt-[10px] h-[40px] px-[20px] flex items-center ${
-                            disabledDates.includes(item.split("_")[1])
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                        }`}
-                        onClick={() => handleClick(item.split("_")[1], index)}
-                        disabled={disabledDates.includes(item.split("_")[1])}
-                    >
-                        {item.split("_")[0]}
-                    </button>
-                );
-            })}
+        <div className="flex flex-col items-center w-full">
+            {currentStep === "a" && (
+                <UniversityList
+                    universities={result || []}
+                    selectedUniversity={selectedUniversities}
+                    onItemClick={(item) => {
+                        handleUniversityItemClick(item);
+                    }}
+                    onCompleteClick={handleCompleteUniversity}
+                />
+            )}
+
+            {currentStep === "b" && setTempalry.length > 0 && (
+                <MajorList
+                    selectedUniversity={tempalry}
+                    onClickNext={handleNextClick}
+                    onClickPrev={handlePrevClick}
+                ></MajorList>
+            )}
+
+            {currentStep === "details" && selectedReslut.length > 0 && (
+                <Detail
+                    selectedUniversities={selectedReslut}
+                    onClicKStep={setCurrentStep}
+                />
+            )}
         </div>
     );
 };

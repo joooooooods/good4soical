@@ -32,7 +32,7 @@ const useFunnel = (defaultStep: string) => {
                 {step === 'Q1' && (
                     <p className='mb-[20px]'>
                         몇 가지 정보를 알려주시면 지원할 수 있는 대학을
-                        추천해드려요.
+                        추천해드립니다.
                     </p>
                 )}
                 {targetStep}

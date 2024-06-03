@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     // 데이터를 이용해 API 호출
     const queryParams = new URLSearchParams(data).toString();
     console.log("queryParams>>", queryParams);
-    const res = await fetch(`http://172.24.101.93:8000?${queryParams}`);
+    const res = await fetch(`http://172.16.5.13:8000?${queryParams}`);
 
     if (res.ok) {
       const responseData = await res.json();

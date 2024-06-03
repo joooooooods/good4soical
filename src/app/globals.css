@@ -4,8 +4,8 @@
 
 :root {
     --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 214, 219, 220;
-    --background-end-rgb: 255, 255, 255;
+    --background-start-rgb: 242, 242, 242;
+    --background-end-rgb: 242, 242, 242;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,8 +17,8 @@
 }
 
 body {
-    color: #fff;
-    background: #000000;
+    color: #000;
+    background: #f2f2f2;
     width: 100%;
     height: 100%;
 }
